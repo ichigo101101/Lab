@@ -23,6 +23,7 @@ const routes = [
       { path: 'password', name: 'Password', meta: { name: '修改密码' }, component: () => import('../views/manager/Password') },
       { path: 'notice', name: 'Notice', meta: { name: '公告信息' }, component: () => import('../views/manager/Notice') },
       { path: 'labadmin', name: 'Labadmin', meta: { name: '实验室管理员' }, component: () => import('../views/manager/Labadmin') },
+      { path: 'student', name: 'Student', meta: { name: '学生信息' }, component: () => import('../views/manager/Student') },
     ]
   },
   {
