@@ -4,9 +4,11 @@ import cn.hutool.core.util.ObjectUtil;
 import com.example.common.Constants;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.common.enums.RoleEnum;
+import com.example.entity.Account;
 import com.example.entity.Labadmin;
 import com.example.exception.CustomException;
 import com.example.mapper.LabadminMapper;
+import com.example.utils.TokenUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,32 @@ public class LabadminService {
 
     @Resource
     private LabadminMapper labadminMapper;
+
+    public Account login(Account account) {
+        Account dbLabadmin = labadminMapper.selectByUsername(account.getUsername());
+        if (ObjectUtil.isNull(dbLabadmin)) {
+            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+        if (!account.getPassword().equals(dbLabadmin.getPassword())) {
+            throw new CustomException(ResultCodeEnum.USER_ACCOUNT_ERROR);
+        }
+        // 生成token
+        String tokenData = dbLabadmin.getId() + "-" + RoleEnum.LABADMIN.name();
+        String token = TokenUtils.createToken(tokenData, dbLabadmin.getPassword());
+        dbLabadmin.setToken(token);
+        return dbLabadmin;
+    }
+    public void updatePassword(Account account) {
+        Labadmin dbLabadmin = labadminMapper.selectByUsername(account.getUsername());
+        if (ObjectUtil.isNull(dbLabadmin)) {
+            throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+        }
+        if (!account.getPassword().equals(dbLabadmin.getPassword())) {
+            throw new CustomException(ResultCodeEnum.PARAM_PASSWORD_ERROR);
+        }
+        dbLabadmin.setPassword(account.getNewPassword());
+        labadminMapper.updateById(dbLabadmin);
+    }
 
     /**
      * 新增
