@@ -26,6 +26,7 @@ const routes = [
       { path: 'student', name: 'Student', meta: { name: '学生信息' }, component: () => import('../views/manager/Student') },
       { path: 'labadminPerson', name: 'LabadminPerson', meta: { name: '个人信息' }, component: () => import('../views/manager/LabadminPerson') },
       { path: 'studentPerson', name: 'StudentPerson', meta: { name: '个人信息' }, component: () => import('../views/manager/StudentPerson') },
+      { path: 'type', name: 'Type', meta: { name: '实验室分类' }, component: () => import('../views/manager/Type') },
     ]
   },
   {
