@@ -14,6 +14,8 @@ public enum ResultCodeEnum {
     USER_ACCOUNT_ERROR("5003", "账号或密码错误"),
     USER_NOT_EXIST_ERROR("5004", "用户不存在"),
     PARAM_PASSWORD_ERROR("5005", "原密码输入错误"),
+    TYPE_NO_ERROR("5006", "未查询到该实验室分类"),
+    TYPE_LABADMIN_NO_ERROR("5007", "请先给该分类分配一个实验室管理员"),
     ;
 
     public String code;
