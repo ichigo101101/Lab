@@ -53,7 +53,9 @@
             <el-menu-item index="/labadmin">实验室管理员</el-menu-item>
             <el-menu-item index="/student">学生信息</el-menu-item>
             <el-menu-item index="/type">实验室分类</el-menu-item>
-            <el-menu-item index="/lab">实验室信息</el-menu-item>
+<!--            <el-menu-item index="/lab">实验室信息</el-menu-item>-->
+            <el-menu-item index="/lab" v-if="user.role !== 'STUDENT'">实验室信息</el-menu-item>
+            <el-menu-item index="/labStudent" v-else>实验室信息</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>

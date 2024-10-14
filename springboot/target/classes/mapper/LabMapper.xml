@@ -17,6 +17,8 @@
             <if test="id != null"> and id= #{id}</if>
             <if test="name != null"> and lab.name like concat('%', #{name}, '%')</if>
             <if test="labadminId != null"> and lab.labadmin_id= #{labadminId}</if>
+            <if test="typeId != null"> and lab.type_id= #{typeId}</if>
+
         </where>
         order by id desc
     </select>
