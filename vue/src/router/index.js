@@ -30,6 +30,7 @@ const routes = [
       { path: 'lab', name: 'Lab', meta: { name: '实验室信息' }, component: () => import('../views/manager/Lab') },
       { path: 'labStudent', name: 'LabStudent', meta: { name: '实验室信息' }, component: () => import('../views/manager/LabStudent') },
       { path: 'reserve', name: 'Reserve', meta: { name: '预约记录' }, component: () => import('../views/manager/Reserve') },
+      { path: 'fix', name: 'Fix', meta: { name: '报修记录' }, component: () => import('../views/manager/Fix') },
     ]
   },
   {
