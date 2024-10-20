@@ -93,4 +93,8 @@ public class LabService {
         return PageInfo.of(list);
     }
 
+    public long selectCount(String status) {
+        return labMapper.selectCount(status);
+    }
+
 }
