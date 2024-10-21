@@ -67,6 +67,21 @@
             this.loadType()
         },
         methods: {
+            reserve(item){
+                let data = {
+                    labId:item.id,
+                    labadminId:item.labadminId,
+                    studentId:this.user.id,
+                    status:'待审核',
+                    dotatus:'待审核'
+                }
+                this.$request.post('/reserve/add',data).then(res =>{
+                    if(res.code === '200') {
+                        this.$message.success('操作成功，等待管理员审核')
+                        this
+                    }
+                })
+            },
             loadType() {
                 this.$request.get('/type/selectAll').then(res => {
                     if (res.code === '200') {
