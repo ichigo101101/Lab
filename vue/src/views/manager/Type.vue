@@ -12,7 +12,7 @@
         </div>
 
         <div class="table">
-            <el-table :data="tableData" stripe  @selection-change="handleSelectionChange">
+            <el-table :data="tableData" stripe @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="序号" width="80" align="center" sortable></el-table-column>
                 <el-table-column prop="name" label="分类名称" show-overflow-tooltip></el-table-column>
@@ -22,7 +22,7 @@
                 <el-table-column label="操作" width="180" align="center">
                     <template v-slot="scope">
                         <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
-                        <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
+                        <el-button plain type="danger" size="mini" @click="del(scope.row.id)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -40,7 +40,6 @@
             </div>
         </div>
 
-
         <el-dialog title="信息" :visible.sync="fromVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
             <el-form label-width="100px" style="padding-right: 50px" :model="form" :rules="rules" ref="formRef">
                 <el-form-item prop="name" label="分类名称">
@@ -51,7 +50,12 @@
                 </el-form-item>
                 <el-form-item prop="labadminId" label="选择管理员">
                     <el-select v-model="form.labadminId" placeholder="请选择实验室管理员" style="width: 100%">
-                        <el-option v-for="item in labadminData" :label="item.name" :value="item.id"></el-option>
+                        <el-option
+                                v-for="item in labadminData"
+                                :key="item.id"  <!-- 添加唯一的 key -->
+                        :label="item.name"
+                        :value="item.id">
+                        </el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -60,8 +64,6 @@
                 <el-button type="primary" @click="save">确 定</el-button>
             </div>
         </el-dialog>
-
-
     </div>
 </template>
 
@@ -71,8 +73,8 @@
         data() {
             return {
                 tableData: [],  // 所有的数据
-                pageNum: 1,   // 当前的页码
-                pageSize: 10,  // 每页显示的个数
+                pageNum: 1,     // 当前的页码
+                pageSize: 10,   // 每页显示的个数
                 total: 0,
                 name: null,
                 fromVisible: false,
@@ -80,92 +82,90 @@
                 user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
                 rules: {
                     name: [
-                        {required: true, message: '请输入分类名称', trigger: 'blur'},
+                        { required: true, message: '请输入分类名称', trigger: 'blur' },
                     ],
                     labadminId: [
-                        {required: true, message: '请选择实验室管理员', trigger: 'blur'},
+                        { required: true, message: '请选择实验室管理员', trigger: 'blur' },
                     ],
                 },
                 ids: [],
                 labadminData: []
-            }
+            };
         },
         created() {
-            this.load(1)
-            this.loadLabadmin()
+            this.load(1);
+            this.loadLabadmin();
         },
         methods: {
             loadLabadmin() {
                 this.$request.get('/labadmin/selectAll').then(res => {
                     if (res.code === '200') {
-                        this.labadminData = res.data
+                        this.labadminData = res.data;
                     } else {
-                        this.$message.error(res.msg)
+                        this.$message.error(res.msg);
                     }
-                })
+                });
             },
             handleAdd() {   // 新增数据
-                this.form = {}  // 新增数据的时候清空数据
-                this.fromVisible = true   // 打开弹窗
+                this.form = {};  // 清空数据
+                this.fromVisible = true;   // 打开弹窗
             },
             handleEdit(row) {   // 编辑数据
-                this.form = JSON.parse(JSON.stringify(row))  // 给form对象赋值  注意要深拷贝数据
-                this.fromVisible = true   // 打开弹窗
+                this.form = { ...row };  // 使用扩展运算符进行浅拷贝
+                this.fromVisible = true;   // 打开弹窗
             },
-            save() {   // 保存按钮触发的逻辑  它会触发新增或者更新
-                this.$refs.formRef.validate((valid) => {
+            save() {   // 保存按钮触发的逻辑
+                this.$refs.formRef.validate(valid => {
                     if (valid) {
                         this.$request({
                             url: this.form.id ? '/type/update' : '/type/add',
                             method: this.form.id ? 'PUT' : 'POST',
                             data: this.form
                         }).then(res => {
-                            if (res.code === '200') {  // 表示成功保存
-                                this.$message.success('保存成功')
-                                this.load(1)
-                                this.fromVisible = false
+                            if (res.code === '200') {  // 保存成功
+                                this.$message.success('保存成功');
+                                this.load(1);
+                                this.fromVisible = false;
                             } else {
-                                this.$message.error(res.msg)  // 弹出错误的信息
+                                this.$message.error(res.msg);  // 弹出错误信息
                             }
-                        })
+                        });
                     }
-                })
+                });
             },
             del(id) {   // 单个删除
-                this.$confirm('您确定删除吗？', '确认删除', {type: "warning"}).then(response => {
+                this.$confirm('您确定删除吗？', '确认删除', { type: "warning" }).then(() => {
                     this.$request.delete('/type/delete/' + id).then(res => {
-                        if (res.code === '200') {   // 表示操作成功
-                            this.$message.success('操作成功')
-                            this.load(1)
+                        if (res.code === '200') {   // 操作成功
+                            this.$message.success('操作成功');
+                            this.load(1);
                         } else {
-                            this.$message.error(res.msg)  // 弹出错误的信息
+                            this.$message.error(res.msg);  // 弹出错误信息
                         }
-                    })
-                }).catch(() => {
-                })
+                    });
+                }).catch(() => {});
             },
-            handleSelectionChange(rows) {   // 当前选中的所有的行数据
-                this.ids = rows.map(v => v.id)   //  [1,2]
+            handleSelectionChange(rows) {   // 当前选中的所有行数据
+                this.ids = rows.map(v => v.id);   // [1,2]
             },
             delBatch() {   // 批量删除
                 if (!this.ids.length) {
-                    this.$message.warning('请选择数据')
-                    return
+                    this.$message.warning('请选择数据');
+                    return;
                 }
-                this.$confirm('您确定批量删除这些数据吗？', '确认删除', {type: "warning"}).then(response => {
-                    this.$request.delete('/type/delete/batch', {data: this.ids}).then(res => {
-                        if (res.code === '200') {   // 表示操作成功
-                            this.$message.success('操作成功')
-                            this.load(1)
+                this.$confirm('您确定批量删除这些数据吗？', '确认删除', { type: "warning" }).then(() => {
+                    this.$request.delete('/type/delete/batch', { data: this.ids }).then(res => {
+                        if (res.code === '200') {   // 操作成功
+                            this.$message.success('操作成功');
+                            this.load(1);
                         } else {
-                            this.$message.error(res.msg)  // 弹出错误的信息
+                            this.$message.error(res.msg);  // 弹出错误信息
                         }
-                    })
-                }).catch(() => {
-                })
+                    });
+                }).catch(() => {});
             },
             load(pageNum) {  // 分页查询
-                if (pageNum) this.pageNum = pageNum
+                if (pageNum) this.pageNum = pageNum;
                 this.$request.get('/type/selectPage', {
                     params: {
                         pageNum: this.pageNum,
@@ -173,21 +173,21 @@
                         name: this.name,
                     }
                 }).then(res => {
-                    this.tableData = res.data?.list
-                    this.total = res.data?.total
-                })
+                    this.tableData = res.data?.list || [];  // 默认值避免 undefined
+                    this.total = res.data?.total || 0;  // 默认值避免 undefined
+                });
             },
             reset() {
-                this.name = null
-                this.load(1)
+                this.name = null;
+                this.load(1);
             },
             handleCurrentChange(pageNum) {
-                this.load(pageNum)
+                this.load(pageNum);
             },
         }
     }
 </script>
 
 <style scoped>
-
+    /* 可以在这里添加自定义样式 */
 </style>

@@ -2,8 +2,9 @@ package com.example.common.enums;
 
 public enum ReserveEnum {
 
-    DONE("已做"),
-    NO("不"),
+    DONE("已结束"),
+    NO("审核不通过"),
+    OK("审核通过"),
     ;
 
     public String status;
